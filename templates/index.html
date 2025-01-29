@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Web</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input {
+            border: 1px solid #ccc;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #5563c1;
+        }
+        #chat {
+            display: none;
+        }
+        #mensagens {
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .mensagem {
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 5px 0;
+            max-width: 70%;
+        }
+        .minha-mensagem {
+            background: #667eea;
+            color: white;
+            align-self: flex-end;
+            text-align: right;
+            margin-left: auto;
+        }
+        .outra-mensagem {
+            background: #e1e1e1;
+            color: black;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Chat Web</h1>
+        
+        <div id="login">
+            <input type="text" id="nome" placeholder="Digite seu nome">
+            <input type="text" id="sala" placeholder="Nome da sala">
+            <button onclick="entrar()">Entrar</button>
+        </div>
+
+        <div id="chat">
+            <h2 id="sala-atual"></h2>
+            <div id="mensagens"></div>
+            <input type="text" id="mensagem" placeholder="Digite sua mensagem">
+            <button onclick="enviar()">Enviar</button>
+            <button onclick="sair()">Sair</button>
+        </div>
+    </div>
+
+    <script>
+        var socket = io();
+        var nome, sala;
+
+        function entrar() {
+            nome = document.getElementById('nome').value;
+            sala = document.getElementById('sala').value;
+            if (nome && sala) {
+                socket.emit('entrar', { nome, sala });
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('chat').style.display = 'block';
+                document.getElementById('sala-atual').innerText = "Sala: " + sala;
+            }
+        }
+
+        socket.on('message', function(msg) {
+            var mensagens = document.getElementById('mensagens');
+            var novaMensagem = document.createElement('div');
+
+            if (msg.startsWith(nome + ":")) {
+                novaMensagem.classList.add('mensagem', 'minha-mensagem');
+            } else {
+                novaMensagem.classList.add('mensagem', 'outra-mensagem');
+            }
+
+            novaMensagem.innerText = msg;
+            mensagens.appendChild(novaMensagem);
+            mensagens.scrollTop = mensagens.scrollHeight;  // Rolagem automática
+        });
+
+        function enviar() {
+            var mensagem = document.getElementById('mensagem').value;
+            if (mensagem) {
+                socket.emit('mensagem', { nome, sala, mensagem });
+                document.getElementById('mensagem').value = "";
+            }
+        }
+
+        function sair() {
+            socket.emit('sair', { nome, sala });
+            location.reload();
+        }
+    </script>
+
+</body>
+</html>
