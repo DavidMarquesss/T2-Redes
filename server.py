@@ -29,7 +29,7 @@ def mensagem(dados):
     sala = dados['sala']
     msg = dados['mensagem']
 
-    send(f"{nome}: {msg}", to=sala)  # Envia a mensagem para todos na sala
+    send(f"{nome}\n{msg}", to=sala)  # Envia a mensagem para todos na sala
 
 @socketio.on('sair')
 def sair(dados):
@@ -41,7 +41,7 @@ def sair(dados):
     send(f"{nome} saiu da sala {sala}.", to=sala)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='10.9.8.183', port=5000, debug=True)
 
 
 '''

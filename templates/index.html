@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Web</title>
+    <title>Local Network Chat 🖥️</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
     <style>
         * {
@@ -69,14 +69,14 @@
             max-width: 70%;
         }
         .minha-mensagem {
-            background: #667eea;
+            background-color: #667eea;
             color: white;
             align-self: flex-end;
             text-align: right;
             margin-left: auto;
         }
         .outra-mensagem {
-            background: #e1e1e1;
+            background-color: #e1e1e1;
             color: black;
             text-align: left;
         }
@@ -85,10 +85,10 @@
 <body>
 
     <div class="container">
-        <h1>Chat Web</h1>
+        <h1>Web Chat 🖥️</h1>
         
         <div id="login">
-            <input type="text" id="nome" placeholder="Digite seu nome">
+            <input type="text" id="nome" placeholder="Nome de usuário">
             <input type="text" id="sala" placeholder="Nome da sala">
             <button onclick="entrar()">Entrar</button>
         </div>
