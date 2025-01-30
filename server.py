@@ -41,7 +41,7 @@ def sair(dados):
     send(f"{nome} saiu da sala {sala}.", to=sala)
 
 if __name__ == '__main__':
-    socketio.run(app, host='10.9.8.183', port=5000, debug=True)
+    socketio.run(app, host='10.9.8.51', port=5000, debug=True)
 
 
 '''
