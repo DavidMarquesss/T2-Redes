@@ -61,11 +61,16 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
+        .mensagem-container {
+            margin: 10px 0; /* Espaço entre mensagens */
+            width: 100%;
+        }
         .mensagem {
-            padding: 8px 12px;
-            border-radius: 5px;
-            margin: 5px 0;
-            max-width: 70%;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%; /* Largura máxima reduzida */
+            word-wrap: break-word;
+            display: inline-block; /* Mantém o tamanho do conteúdo */
         }
         .minha-mensagem {
             background-color: #667eea;
@@ -80,18 +85,23 @@
             text-align: left;
         }
         .mensagem-imagem {
-            max-width: 300px;
-            margin: 10px 0;
+            max-width: 250px; /* Largura fixa para imagens */
+            height: auto;
             border-radius: 5px;
+            display: block; /* Centraliza a imagem */
+            margin: 5px auto; /* Centraliza horizontalmente */
+        }
+        .download-container {
+            text-align: center; /* Centraliza o botão */
+            margin-top: 8px;
         }
         .download-btn {
             background: #4CAF50;
-            padding: 5px;
-            margin-top: 5px;
-            display: inline-block;
-            border-radius: 3px;
+            padding: 6px 12px;
+            border-radius: 4px;
             color: white;
             text-decoration: none;
+            display: inline-block; /* Permite centralização */
         }
         #salas-ativas {
             text-align: left;
@@ -197,18 +207,24 @@
         socket.on('message', function(data) {
             const mensagens = document.getElementById('mensagens');
             const novaMensagem = document.createElement('div');
-            
+            novaMensagem.classList.add('mensagem-container'); // Adiciona o container
+
             if (data.tipo === 'imagem') {
                 novaMensagem.innerHTML = `
-                    <div class="mensagem outra-mensagem">
-                        <strong>${data.nome}:</strong><br>
+                    <div class="${data.nome === nome ? 'minha-mensagem' : 'outra-mensagem'}">
+                        <strong>${data.nome}:</strong>
                         <img src="${data.url}" class="mensagem-imagem">
-                        <a href="${data.url}" download="${data.filename}" class="download-btn">Baixar</a>
+                        <div class="download-container">
+                            <a href="${data.url}" download="${data.filename}" class="download-btn">Baixar</a>
+                        </div>
                     </div>
                 `;
             } else {
-                novaMensagem.classList.add('mensagem', 'outra-mensagem');
-                novaMensagem.innerText = data.conteudo;
+                novaMensagem.innerHTML = `
+                    <div class="${data.nome === nome ? 'minha-mensagem' : 'outra-mensagem'}">
+                        ${data.conteudo}
+                    </div>
+                `;
             }
             
             mensagens.appendChild(novaMensagem);
