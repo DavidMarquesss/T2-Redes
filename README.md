@@ -1,6 +1,13 @@
 
 # Web Chat - Rede Local
 
+<div align="center">
+
+![Interface](interface.png)
+
+</div>
+
+
 ## Descrição 📄
 Um sistema de chat em tempo real para comunicação em redes locais. Permite a criação de salas, envio de mensagens e listagem de salas ativas.
 
@@ -77,5 +84,6 @@ Um sistema de chat em tempo real para comunicação em redes locais. Permite a c
 ├── templates
      └── index.html    # Interface do usuário
 ├── requirements.txt   # Dependências (Flask, Flask-SocketIO)
+├── interface.png      # Imagem para o README.md
 └── README.md          # Documentação
 ```
