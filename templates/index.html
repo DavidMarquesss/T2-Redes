@@ -27,8 +27,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             text-align: center;
         }
-        h1 {
-            font-size: 22px;
+        h1, h2, h3 {
             margin-bottom: 20px;
         }
         input, button {
@@ -80,6 +79,26 @@
             color: black;
             text-align: left;
         }
+        /* Estilização para a lista de salas ativas */
+        #salas-ativas {
+            text-align: left;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f1f1f1;
+        }
+        #salas-ativas ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        #salas-ativas li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        #salas-ativas li:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -91,6 +110,15 @@
             <input type="text" id="nome" placeholder="Nome de usuário">
             <input type="text" id="sala" placeholder="Nome da sala">
             <button onclick="entrar()">Entrar</button>
+
+            <!-- Seção para listar salas ativas -->
+            <div id="salas-ativas">
+                <h3>Salas Ativas</h3>
+                <ul id="lista-salas">
+                    <!-- As salas ativas serão inseridas aqui -->
+                </ul>
+                <button onclick="listarSalas()">Atualizar Salas</button>
+            </div>
         </div>
 
         <div id="chat">
@@ -105,6 +133,11 @@
     <script>
         var socket = io();
         var nome, sala;
+
+        // Ao carregar a página, já solicita as salas ativas
+        window.onload = function() {
+            listarSalas();
+        };
 
         function entrar() {
             nome = document.getElementById('nome').value;
@@ -128,6 +161,7 @@
             var mensagens = document.getElementById('mensagens');
             var novaMensagem = document.createElement('div');
 
+            // Identifica se a mensagem é do usuário logado
             if (msg.startsWith(nome + ":")) {
                 novaMensagem.classList.add('mensagem', 'minha-mensagem');
             } else {
@@ -155,6 +189,28 @@
             socket.emit('sair', { nome, sala });
             location.reload();
         }
+
+        // Função para solicitar ao servidor a lista de salas ativas
+        function listarSalas() {
+            socket.emit('listar_salas');
+        }
+
+        // Ao receber a lista de salas ativas, atualiza a interface
+        socket.on('salas_ativas', function(salasAtivas) {
+            var listaSalas = document.getElementById('lista-salas');
+            listaSalas.innerHTML = '';  // Limpa a lista atual
+            if (salasAtivas.length === 0) {
+                var li = document.createElement('li');
+                li.innerText = "Nenhuma sala ativa.";
+                listaSalas.appendChild(li);
+            } else {
+                salasAtivas.forEach(function(sala) {
+                    var li = document.createElement('li');
+                    li.innerText = sala;
+                    listaSalas.appendChild(li);
+                });
+            }
+        });
     </script>
 
 </body>
