@@ -9,20 +9,16 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Dicionário para armazenar salas e usuários
 salas = {}
 
-# Verificar extensão do arquivo
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-# Rota para download de imagens
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-# Rota para upload de imagens
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -65,7 +61,6 @@ def mensagem(dados):
     sala = dados['sala']
     
     if 'imagem' in dados:
-        # Se for uma mensagem com imagem
         filename = dados['imagem']
         url = f"/uploads/{filename}"
         send({
@@ -75,7 +70,6 @@ def mensagem(dados):
             'filename': filename
         }, to=sala)
     else:
-        # Mensagem de texto normal
         msg = dados['mensagem']
         send({
             'nome': nome,
@@ -104,6 +98,7 @@ def listar_salas():
     salas_ativas = [sala for sala, usuarios in salas.items() if usuarios]
     emit('salas_ativas', salas_ativas, room=request.sid)
 
+# Alterar o host para o que preferir
 if __name__ == '__main__':
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])

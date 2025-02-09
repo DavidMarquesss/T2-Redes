@@ -1,35 +1,46 @@
 
-# Web Chat - Rede Local
+# 🖥️ Chat em Rede Local com Envio de Imagens
 
-<div align="center">
+Um sistema de chat em tempo real para redes locais para mútliplas salas utilizando de Threading, desenvolvido com **Flask** e **Socket.IO**, que permite envio de mensagens de texto, imagens e listagem de salas ativas.
 
-![Interface](interface.png)
+![Captura de Tela do Chat](interface.png)  
 
-</div>
+---
 
+## 🚀 Funcionalidades
 
-## Descrição 📄
-Um sistema de chat em tempo real para comunicação em redes locais. Permite a criação de salas, envio de mensagens e listagem de salas ativas.
+- **Criar/Entrar em Salas**: Participe de salas com um nome de usuário.
+- **Envio de Mensagens com Usuários**: Envio de mensagem com o nome do usuário que a enviou.
+- **Envio de Imagens**: Compartilhamento de imagens (PNG, JPG, JPEG, GIF).
+- **Download de Imagens**: Baixe as imagens enviadas no chat.
+- **Salas Ativas**: Visualize todas as salas com usuários online.
 
-## Tecnologias Utilizadas 🛠️
-- **Back-end**: 
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Back-end**:
   - Python
   - Flask (Framework web)
   - Flask-SocketIO (Comunicação em tempo real)
+  - UUID (Geração de nomes únicos para arquivos)
 - **Front-end**:
   - HTML, CSS, JavaScript
   - Socket.IO (Biblioteca para WebSockets)
 
-## Como Executar ▶️
+---
+
+## 📦 Como Executar
 
 ### Pré-requisitos
 - Python 3.x
-- Dependências instaladas via `pip` (ver `requirements.txt`).
+- Dependências instaladas via `pip` (veja `requirements.txt`).
 
 ### Passo a Passo
+
 1. **Clone o repositório**:
    ```bash
-   git clone https://github.com/DavidMarquesss/T2-Redes.git
+   git clone https://github.com/seu-usuario/T2-Redes
    cd T2-Redes
    ```
 
@@ -38,52 +49,49 @@ Um sistema de chat em tempo real para comunicação em redes locais. Permite a c
    pip install -r requirements.txt
    ```
 
-3. **Inicie o servidor**:
+4. **Inicie o servidor**:
    ```bash
    python server.py
    ```
 
-4. **Acesse o chat**:
-   - Abra o navegador em `http://localhost:5000`.
+5. **Acesse o chat**:
+   - Abra o navegador em: `http://localhost:5000`.
    - Insira um **nome de usuário** e o **nome da sala**.
-   - Clique em **Entrar** para começar
+   - Clique em **Entrar** e comece a conversar!
 
 ---
 
-## Funcionalidades 💡
-- **Entrar/Sair de Salas**: Participe de múltiplas salas com um nome de usuário.
-- **Mensagens em Tempo Real**: Envie e receba mensagens instantaneamente.
-- **Salas Ativas**: Visualize todas as salas com usuários conectados.
-- **Design Responsivo**: Interface amigável para dispositivos móveis e desktop.
+## 🖼️ Como Usar
 
-## Testando o Sistema 🧪
-1. **Conexão Múltipla**:
-   - Abra várias abas/dispositivos na mesma rede.
-   - Acesse a mesma sala e verifique a sincronização das mensagens.
+1. **Enviar Mensagem de Texto**:
+   - Digite a mensagem no campo de texto e pressione **Enter** ou clique em **Enviar**.
 
-2. **Atualização de Salas**:
-   - Crie salas diferentes e clique em **Atualizar Salas** para ver a lista.
+2. **Enviar Imagem**:
+   - Clique em **Enviar Imagem**, selecione o arquivo e aguarde o upload.
 
-3. **Saída de Usuário**:
-   - Clique em **Sair** e confira se a sala é atualizada.
+3. **Baixar Imagem**:
+   - Clique em **Baixar** abaixo da imagem desejada.
+
+4. **Sair da Sala**:
+   - Clique em **Sair** para retornar à tela inicial.
 
 ---
 
-## Melhorias Futuras 🔮
-- **Histórico de Mensagens**: Salvar mensagens em um banco de dados.
-- **Salas Privadas**: Proteger salas com senha.
-- **Upload de Arquivos**: Compartilhar imagens ou documentos.
-- **Notificações Sonoras**: Alertas para novas mensagens.
+## 🔮  Possíveis Melhorias Futuras
+
+- [ ] Salas privadas com senha
+- [ ] Upload de arquivos (PDF, DOCX)
 
 ---
 
 ### Estrutura do Projeto
 ```
 📁 projeto/
-├── server.py          # Lógica do servidor
+├── server.py
 ├── templates
-     └── index.html    # Interface do usuário
-├── requirements.txt   # Dependências (Flask, Flask-SocketIO)
-├── interface.png      # Imagem para o README.md
-└── README.md          # Documentação
-```
+      └── index.html
+├── requirements.txt
+├── uploads/          # Armazena imagens enviadas
+├── interface-chat.png 
+└── README.md
+``` 
