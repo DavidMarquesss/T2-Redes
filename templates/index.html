@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local Network Chat 🖥️</title>
+    <title>Web Chat 🖥️</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
     <style>
         * {
@@ -61,11 +61,16 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
+        .mensagem-container {
+            margin: 10px 0; /* Espaço entre mensagens */
+            width: 100%;
+        }
         .mensagem {
-            padding: 8px 12px;
-            border-radius: 5px;
-            margin: 5px 0;
-            max-width: 70%;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%; /* Largura máxima reduzida */
+            word-wrap: break-word;
+            display: inline-block; /* Mantém o tamanho do conteúdo */
         }
         .minha-mensagem {
             background-color: #667eea;
@@ -79,7 +84,25 @@
             color: black;
             text-align: left;
         }
-        /* Estilização para a lista de salas ativas */
+        .mensagem-imagem {
+            max-width: 250px; /* Largura fixa para imagens */
+            height: auto;
+            border-radius: 5px;
+            display: block; /* Centraliza a imagem */
+            margin: 5px auto; /* Centraliza horizontalmente */
+        }
+        .download-container {
+            text-align: center; /* Centraliza o botão */
+            margin-top: 8px;
+        }
+        .download-btn {
+            background: #4CAF50;
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: white;
+            text-decoration: none;
+            display: inline-block; /* Permite centralização */
+        }
         #salas-ativas {
             text-align: left;
             margin-top: 20px;
@@ -102,7 +125,6 @@
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>Web Chat 🖥️</h1>
         
@@ -111,12 +133,9 @@
             <input type="text" id="sala" placeholder="Nome da sala">
             <button onclick="entrar()">Entrar</button>
 
-            <!-- Seção para listar salas ativas -->
             <div id="salas-ativas">
                 <h3>Salas Ativas</h3>
-                <ul id="lista-salas">
-                    <!-- As salas ativas serão inseridas aqui -->
-                </ul>
+                <ul id="lista-salas"></ul>
                 <button onclick="listarSalas()">Atualizar Salas</button>
             </div>
         </div>
@@ -124,6 +143,8 @@
         <div id="chat">
             <h2 id="sala-atual"></h2>
             <div id="mensagens"></div>
+            <input type="file" id="arquivo" accept="image/*" style="display: none;">
+            <button onclick="document.getElementById('arquivo').click()">Enviar Imagem</button>
             <input type="text" id="mensagem" placeholder="Digite sua mensagem">
             <button onclick="enviar()">Enviar</button>
             <button onclick="sair()">Sair</button>
@@ -134,7 +155,6 @@
         var socket = io();
         var nome, sala;
 
-        // Ao carregar a página, já solicita as salas ativas
         window.onload = function() {
             listarSalas();
         };
@@ -157,20 +177,58 @@
             if (event.key === 'Enter') entrar();
         });
 
-        socket.on('message', function(msg) {
-            var mensagens = document.getElementById('mensagens');
-            var novaMensagem = document.createElement('div');
+        function enviarImagem(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    socket.emit('mensagem', {
+                        nome: nome,
+                        sala: sala,
+                        imagem: data.filename
+                    });
+                }
+            });
+        }
 
-            // Identifica se a mensagem é do usuário logado
-            if (msg.startsWith(nome + ":")) {
-                novaMensagem.classList.add('mensagem', 'minha-mensagem');
-            } else {
-                novaMensagem.classList.add('mensagem', 'outra-mensagem');
+        document.getElementById('arquivo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                enviarImagem(file);
             }
+        });
 
-            novaMensagem.innerText = msg;
+        socket.on('message', function(data) {
+            const mensagens = document.getElementById('mensagens');
+            const novaMensagem = document.createElement('div');
+            novaMensagem.classList.add('mensagem-container'); // Adiciona o container
+
+            if (data.tipo === 'imagem') {
+                novaMensagem.innerHTML = `
+                    <div class="${data.nome === nome ? 'minha-mensagem' : 'outra-mensagem'}">
+                        <strong>${data.nome}:</strong>
+                        <img src="${data.url}" class="mensagem-imagem">
+                        <div class="download-container">
+                            <a href="${data.url}" download="${data.filename}" class="download-btn">Baixar</a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                novaMensagem.innerHTML = `
+                    <div class="${data.nome === nome ? 'minha-mensagem' : 'outra-mensagem'}">
+                        ${data.conteudo}
+                    </div>
+                `;
+            }
+            
             mensagens.appendChild(novaMensagem);
-            mensagens.scrollTop = mensagens.scrollHeight;  // Rolagem automática
+            mensagens.scrollTop = mensagens.scrollHeight;
         });
 
         function enviar() {
@@ -190,15 +248,13 @@
             location.reload();
         }
 
-        // Função para solicitar ao servidor a lista de salas ativas
         function listarSalas() {
             socket.emit('listar_salas');
         }
 
-        // Ao receber a lista de salas ativas, atualiza a interface
         socket.on('salas_ativas', function(salasAtivas) {
             var listaSalas = document.getElementById('lista-salas');
-            listaSalas.innerHTML = '';  // Limpa a lista atual
+            listaSalas.innerHTML = '';
             if (salasAtivas.length === 0) {
                 var li = document.createElement('li');
                 li.innerText = "Nenhuma sala ativa.";
@@ -212,6 +268,5 @@
             }
         });
     </script>
-
 </body>
 </html>
