@@ -38,16 +38,16 @@ Um sistema de chat em tempo real para redes locais para mútliplas salas utiliza
 
 ### Passo a Passo
 
-1. **Clone o repositório e mude para a branch imagem**:
+1. **Clone o repositório**:
    ```bash
    git clone https://github.com/DavidMarquesss/T2-Redes.git
    cd T2-Redes
-   git checkout imagem
    ```
 
-2. **Instale as dependências**:
+2. **Instale as dependências e crie a pasta uploads**:
    ```bash
    pip install -r requirements.txt
+   mkdir uploads
    ```
 
 4. **Inicie o servidor**:
