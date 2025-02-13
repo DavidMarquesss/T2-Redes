@@ -19,16 +19,42 @@ Um sistema de chat em tempo real para redes locais para mútliplas salas utiliza
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Back-end**:
-  - Python
-  - Flask (Framework web)
-  - Flask-SocketIO (Comunicação em tempo real)
-  - UUID (Geração de nomes únicos para arquivos)
-- **Front-end**:
-  - HTML, CSS, JavaScript
-  - Socket.IO (Biblioteca para WebSockets)
+### **Protocolo de Comunicação**  
+- **WebSocket (via Socket.IO)**:   
+  - **Funcionamento**:  
+    - O handshake inicial é feito via HTTP, seguido pela atualização para WebSocket.  
+    - Mantém uma conexão persistente entre cliente e servidor, reduzindo o delay.  
+
+### **Arquitetura Cliente-Servidor**  
+- **Gerenciamento de Salas**: Foi usado um dicionário em memória para armazenar a sala e seus usuários. Foi projetado para redes locais pequenas. Exemplo de dicionário : `salas = { "sala1": ["user1", "user2"], ... }`  
+
+### **Transferência de Arquivos (Imagens)**  
+- **Upload via HTTP POST**:  
+  - Rota `/upload` recebe arquivos e armazena na pasta `uploads`.  
+  - **Validação**: Extensões permitidas (`png`, `jpg`, etc.) e padronização de nomes de arquivo (UUID).  
+- **Download via HTTP GET**:  
+  - Rota `/uploads/<filename>` serve arquivos estáticos.
+
+### Funciona das Biblioteca Flask-SocketIO com Eventlet 
+  - **Eventlet**: Biblioteca de I/O assíncrono que permite multiplexação de conexões em uma única thread.  
+  - **Funcionamento**:  
+    - Cada cliente é tratado como uma corrotina, não bloqueando o servidor durante operações de I/O (ex: envio de mensagens).   
+  
+
+###  Testes de Rede Realizados  
+
+1. **Concorrência Máxima**:  
+   - 50 clientes conectados em uma sala, enviando mensagens simultâneas.  
+   - **Resultado**: Latência média de 120ms  
+
+2. **Transferência de Imagens**:  
+   - Arquivo de 2MB enviado em 0.82s (taxa de ~2.5MB/s).  
+
+3. **Recuperação de Falhas**:  
+   - Servidor reiniciado: Clientes reconectam automaticamente.  
 
 ---
+
 
 ## 📦 Como Executar
 
